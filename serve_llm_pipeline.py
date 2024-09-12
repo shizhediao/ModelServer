@@ -23,6 +23,13 @@ def get_eno1_inet_address():
         return match.group(2)
     return None
 
+def get_eth_inet_address():
+    result = subprocess.run(["ifconfig"], capture_output=True, text=True)
+    output = result.stdout
+    match = re.search(r"eth0:.*?(inet\s+(\d+\.\d+\.\d+\.\d+))", output, re.DOTALL)
+    if match:
+        return match.group(2)
+    return None
 
 def is_gpu_free(gpu_ids):
     gpu_ids_string = ",".join(map(str, gpu_ids))
@@ -58,6 +65,7 @@ def get_free_memory_ratio(gpu_ids):
 
 
 def get_comond_infos(server: Server):
+    print(f"server: {server}")
     assert len(server.gpus) > 0, "No GPUs assigned to the server."
     assert (
         server.port % int(server.model_size) == 0
@@ -66,12 +74,15 @@ def get_comond_infos(server: Server):
         server.model_size in server.model_path
     ), "Model size should be in the model name."
     group_gpu_string = ",".join(map(str, server.gpus))
+    print(f"group_gpu_string: {group_gpu_string}")
     tensor_parallel_size = len(server.gpus)
+    print(f"tensor_parallel_size: {tensor_parallel_size}")
     command = f"""
     CUDA_VISIBLE_DEVICES={group_gpu_string} python -m sglang.launch_server --enable-p2p-check --model-path {server.model_path} \
-    --dtype auto --tensor-parallel-size {tensor_parallel_size} \
+    --dtype auto --tp {tensor_parallel_size} \
     --context-length {MAX_CONTEXT_LENGTH if server.model_size != "7" else 32768} --chunked-prefill-size {CHUNKED_PREFILL_SIZE if server.model_size != "7" else int(32768 / 8)} \
     --port {server.port} --host 0.0.0.0 --api-key sk-1dwqsdv4r3wef3rvefg34ef1dwRv """
+    print(f"command: {command}")
     #! host 0.0.0.0 可以用于广播
     # if server.model_size == "8" or server.model_size == "7":
     #     command += " --enable-torch-compile "
@@ -82,25 +93,35 @@ def get_comond_infos(server: Server):
 
 
 def main():
-    eno1_ip_address = get_eno1_inet_address()
-    ServerID = int(eno1_ip_address[-1])
-    assert ServerID in [3, 4], "Model should be served on server 3 or 4."
-    assert str(ServerID) in socket.gethostname(), "ServerID should be in the hostname."
+    # eno1_ip_address = get_eno1_inet_address()
+    # print(f"eno1_ip_address: {eno1_ip_address}")
+    # eth_ip_address = get_eth_inet_address()
+    eth_ip_address = "127.0.0.1"
+    print(f"eth_ip_address: {eth_ip_address}")
+    # ServerID = int(eth_ip_address[-1])
+    # print(f"ServerID: {ServerID}")
+    # assert ServerID in [3, 4], "Model should be served on server 3 or 4."
+    # print(f"str(ServerID): {str(ServerID)}")
+    print(f"socket.gethostname(): {socket.gethostname()}")
+    # assert str(ServerID) in socket.gethostname(), "ServerID should be in the hostname."
 
     print(
         f"""
 ============================================================
 Cluster: {socket.gethostname()}
-IP: {get_eno1_inet_address()}
+IP: {eth_ip_address}
 ============================================================
 """
     )
-
+    print(f"Completion_Servers: {Completion_Servers}")
+    print(f"Embedding_Servers: {Embedding_Servers}")
     command_infos = [
         get_comond_infos(server)
+        # print(f"server.ip: {server.ip}")
         for server in (Completion_Servers + Embedding_Servers)
-        if (server.ip == eno1_ip_address)
+        if (server.ip == eth_ip_address)
     ]
+    print(f"command_infos: {command_infos}")
 
     def run_with_gpu_check(command_info):
         group_id, command, port, model_size = command_info
@@ -110,7 +131,7 @@ IP: {get_eno1_inet_address()}
             time.sleep(10)
 
         print(
-            f"Serving {model_size}b model on server {ServerID} port {port} with GPUs {group_id}"
+            f"Serving {model_size}b model on server {eth_ip_address} port {port} with GPUs {group_id}"
         )
         free_gpu_ration = min(get_free_memory_ratio(group_id))
         gpu_ultization = None

@@ -16,7 +16,7 @@ from client_configs import (
     MODEL_NAME_70B,
     MODEL_NAME_8B,
     EMBEDDING_7B,
-    EMBEDDING_2B,
+    # EMBEDDING_2B,
     BENCHMAK_MESSAGE,
 )
 
@@ -40,6 +40,8 @@ class ModelServer:
             INF,
             INF,
         )
+        # print(f"Entering __init__")
+        # print(f"running_server_sizes: {running_server_sizes}")
         self.config_path = config_path
         # Turn the running flag in config path when the server failed to get response
         if "70" in running_server_sizes:
@@ -115,7 +117,13 @@ class ModelServer:
         max_tokens: int = 256,
         get_embedding: bool = False,
     ) -> str:
-        # print(f"Message: {message}")
+        # print(f"Entering get_completion_or_embedding")
+        # print(f"model_size: {model_size}")
+        # # print(f"message: {message}")
+        # print(f"temperature: {temperature}")
+        # print(f"max_tokens: {max_tokens}")
+        # print(f"get_embedding: {get_embedding}")
+        # # print(f"Message: {message}")
         assert model_size in ["70", "8", "7", "2"]
         if not get_embedding:
             model_name = MODEL_NAME_70B if model_size == "70" else MODEL_NAME_8B
