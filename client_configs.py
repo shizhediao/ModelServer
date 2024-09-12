@@ -10,8 +10,8 @@ import time
 import multiprocessing
 from typing import List, Optional
 
-SERVER_IP = "[SECRET IP, REPLACE WITH YOURS]"
-MODEL_NAME_8B = "8bins"
+SERVER_IP = "127.0.0.1" #"[SECRET IP, REPLACE WITH YOURS]"
+MODEL_NAME_8B = "meta-llama/Meta-Llama-3-8B-Instruct"
 MODEL_NAME_70B = "70bins"
 EMBEDDING_7B = "7embed"
 INF = 100
@@ -127,7 +127,12 @@ def get_fastest_server(
     SERVERS = Embedding_Servers if test_embedding_servers else Completion_Servers
     min_latency = initial_latency
     fastest_server = None
-
+    # print(f"--------function get_fastest_server--------")
+    # print(f"SERVERS: {SERVERS}")
+    # print(f"test_embedding_servers: {test_embedding_servers}")
+    # print(f"Completion_Servers: {Completion_Servers}")
+    # print(f"Embedding_Servers: {Embedding_Servers}")
+    # print(f"--------function get_fastest_server end--------")
     def test_server(server: Server):
         def get_completion_or_embedding(
             client,
@@ -136,6 +141,13 @@ def get_fastest_server(
             max_tokens: int = 256,
             model_name: Optional[str] = None,
         ) -> str:
+            # print(f"--------function get_completion_or_embedding--------")
+            # print(f"client: {client}")
+            # # print(f"message: {message}")
+            # print(f"temperature: {temperature}")
+            # print(f"max_tokens: {max_tokens}")
+            # print(f"model_name: {model_name}")
+            # print(f"--------function get_completion_or_embedding end--------")
             def target(queue):
                 try:
                     if not test_embedding_servers:
@@ -181,10 +193,16 @@ def get_fastest_server(
                 else:
                     return (list(result.data[0].embedding), latency)
 
+        # print(f"--------function test_server--------")
+        # print(f"server: {server}")
+        # print(f"--------function test_server end--------")
         client = openai.OpenAI(
             base_url=(f"http://{server.ip}:{server.port}/v1"),
             api_key=("sk-1dwqsdv4r3wef3rvefg34ef1dwRv"),
         )
+        # print(f"--------function openai.OpenAI--------")
+        # print(f"client: {client}")
+        # print(f"--------function openai.OpenAI end--------")
 
         try:
             response, latency = get_completion_or_embedding(
@@ -322,9 +340,9 @@ if __name__ == "__main__":
         initial_latency=10, model_size="8", test_embedding_servers=False
     )
     print(server)
-    server, min_latency = get_fastest_server(
-        initial_latency=10, model_size="7", test_embedding_servers=True
-    )
-    print(server)
-    get_all_latency(test_embedding_servers=True)
+    # server, min_latency = get_fastest_server(
+    #     initial_latency=10, model_size="7", test_embedding_servers=True
+    # )
+    # print(server)
+    # get_all_latency(test_embedding_servers=True)
     get_all_latency(test_embedding_servers=False)
