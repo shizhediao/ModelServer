@@ -219,18 +219,19 @@ if __name__ == "__main__":
     #! Test the model server
     server = ModelServer()
     message = BENCHMAK_MESSAGE
-    # message = []
-    for i in range(10):
-        print(f"Completion {i}:")
+    start_time = time.time()
+    for i in range(100):
         complition = server.get_completion_or_embedding("8", message)
-        print(complition)
+        print(f"Completion {i}: {complition}")
+    end_time = time.time()
+    print(f"Time taken: {end_time - start_time} seconds")
 
-    embedding = None
-    for i in range(10):
-        print(f"Embedding {i}:")
-        embedding = server.get_completion_or_embedding(
-            "7",
-            message="As a general guideline, the CDC's average requirement of protein for women ages 19 to 70 is 46 grams per day. But, as you can see from this chart, you'll need to increase that if you're expecting or training for a marathon. Check out the chart below to see how much protein you should be eating each day.",
-            get_embedding=True,
-        )
-        print(embedding[:10])
+    # embedding = None
+    # for i in range(10):
+    #     print(f"Embedding {i}:")
+    #     embedding = server.get_completion_or_embedding(
+    #         "7",
+    #         message="As a general guideline, the CDC's average requirement of protein for women ages 19 to 70 is 46 grams per day. But, as you can see from this chart, you'll need to increase that if you're expecting or training for a marathon. Check out the chart below to see how much protein you should be eating each day.",
+    #         get_embedding=True,
+    #     )
+    #     print(embedding[:10])

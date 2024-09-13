@@ -95,8 +95,8 @@ def get_comond_infos(server: Server):
 def main():
     # eno1_ip_address = get_eno1_inet_address()
     # print(f"eno1_ip_address: {eno1_ip_address}")
-    # eth_ip_address = get_eth_inet_address()
-    eth_ip_address = "127.0.0.1"
+    eth_ip_address = get_eth_inet_address()
+    # eth_ip_address = "10.49.167.237"
     print(f"eth_ip_address: {eth_ip_address}")
     # ServerID = int(eth_ip_address[-1])
     # print(f"ServerID: {ServerID}")

@@ -10,7 +10,8 @@ import time
 import multiprocessing
 from typing import List, Optional
 
-SERVER_IP = "127.0.0.1" #"[SECRET IP, REPLACE WITH YOURS]"
+SERVER1_IP = "10.49.162.122" #"[SECRET IP, REPLACE WITH YOURS]" 10.49.167.237  127.0.0.1
+SERVER2_IP = "10.49.165.73"
 MODEL_NAME_8B = "meta-llama/Meta-Llama-3-8B-Instruct"
 MODEL_NAME_70B = "70bins"
 EMBEDDING_7B = "7embed"
@@ -52,50 +53,99 @@ BENCHMAK_MESSAGE = [
 
 Completion_Servers = [
     Server(
-        ip=SERVER_IP,
+        ip=SERVER1_IP,
         port=8056,
         model_size="8",
         model_path=MODEL_NAME_8B,
         gpus=[1],
     ),
     Server(
-        ip=SERVER_IP,
+        ip=SERVER1_IP,
         port=8064,
         model_size="8",
         model_path=MODEL_NAME_8B,
         gpus=[2],
     ),
     Server(
-        ip=SERVER_IP,
+        ip=SERVER1_IP,
         port=8072,
         model_size="8",
         model_path=MODEL_NAME_8B,
         gpus=[3],
     ),
     Server(
-        ip=SERVER_IP,
+        ip=SERVER1_IP,
         port=8080,
         model_size="8",
         model_path=MODEL_NAME_8B,
         gpus=[4],
     ),
     Server(
-        ip=SERVER_IP,
+        ip=SERVER1_IP,
         port=8088,
         model_size="8",
         model_path=MODEL_NAME_8B,
         gpus=[5],
     ),
     Server(
-        ip=SERVER_IP,
+        ip=SERVER1_IP,
         port=8096,
         model_size="8",
         model_path=MODEL_NAME_8B,
         gpus=[6],
     ),
     Server(
-        ip=SERVER_IP,
+        ip=SERVER1_IP,
         port=8104,
+        model_size="8",
+        model_path=MODEL_NAME_8B,
+        gpus=[7],
+    ),
+    Server(
+        ip=SERVER2_IP,
+        port=8112,
+        model_size="8",
+        model_path=MODEL_NAME_8B,
+        gpus=[1],
+    ),
+    Server(
+        ip=SERVER2_IP,
+        port=8120,
+        model_size="8",
+        model_path=MODEL_NAME_8B,
+        gpus=[2],
+    ),
+    Server(
+        ip=SERVER2_IP,
+        port=8128,
+        model_size="8",
+        model_path=MODEL_NAME_8B,
+        gpus=[3],
+    ),
+    Server(
+        ip=SERVER2_IP,
+        port=8136,
+        model_size="8",
+        model_path=MODEL_NAME_8B,
+        gpus=[4],
+    ),
+    Server(
+        ip=SERVER2_IP,
+        port=8144,
+        model_size="8",
+        model_path=MODEL_NAME_8B,
+        gpus=[5],
+    ),
+    Server(
+        ip=SERVER2_IP,
+        port=8152,
+        model_size="8",
+        model_path=MODEL_NAME_8B,
+        gpus=[6],
+    ),
+    Server(
+        ip=SERVER2_IP,
+        port=8160,
         model_size="8",
         model_path=MODEL_NAME_8B,
         gpus=[7],
@@ -110,15 +160,16 @@ Completion_Servers = [
     # ),
 ]
 
-Embedding_Servers = [
-    Server(
-        ip=SERVER_IP,
-        port=7777,
-        model_size="7",
-        model_path=EMBEDDING_7B,
-        gpus=[0],
-    ),
-]
+Embedding_Servers = []
+# Embedding_Servers = [
+#     Server(
+#         ip=SERVER1_IP,
+#         port=7777,
+#         model_size="7",
+#         model_path=EMBEDDING_7B,
+#         gpus=[0],
+#     ),
+# ]
 
 
 def get_fastest_server(
